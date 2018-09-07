@@ -1,7 +1,7 @@
 **__Skill Level__**: Beginner
 <br>**__N.B__**: All services used in this repo are Lite plans.
 
-*Read this in other launguages: [한국어](README-ko.md)*
+**This is my customized version!**
 
 # [Industrial Visual Analysis](https://developer.ibm.com/code/patterns/industrial-visual-analysis/)
 
