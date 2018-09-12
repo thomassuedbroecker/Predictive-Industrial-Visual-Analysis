@@ -41,9 +41,6 @@ var vr_key = vrCredentials.api_key || process.env.VR_KEY;
 var vr_url = vrCredentials.url || process.env.VR_URL;
 var vr_classifiers = process.env.VR_CLASSIFIERS;
 
-console.log (cloudant_url);
-console.log (vr_key);
-
 // Initialize Cloudant DB
 var cloudant = Cloudant(cloudant_url);
 var db;
@@ -86,6 +83,7 @@ if ('development' == app.get('env')) {
 }
 
 function getDBCredentialsUrl(jsonData) {
+    console.log("getDBCredentialsUrl");
     var vcapServices = JSON.parse(jsonData);
     // Pattern match to find the first instance of a Cloudant service in
     // VCAP_SERVICES. If you know your service key, you can access the
@@ -99,13 +97,14 @@ function getDBCredentialsUrl(jsonData) {
 
 app.get('/simulator', function(req, res){
     //res.sendfile('index_simulator.html', { root: __dirname} );
+    console.log("simulator");
     res.sendFile(path.join(__dirname + '/public/index_simulator.html'));
 });
 
 app.get('/testingpurposes', function (req, res) {
     //for now just returning all images.
     //in the real world you would want to filter this list or truncate/page it
-
+    console.log("testingpurposes");
     db.view( 'image_db_images',  'image_db.images', function(err, body) {
         if (err) {
             console.log("Error during db view stage: " + err.toString());
@@ -123,7 +122,8 @@ app.get('/testingpurposes', function (req, res) {
 app.get('/allimages', function (req, res) {
     //for now just returning all images.
     //in the real world you would want to filter this list or truncate/page it
-
+    
+    console.log("get all images");
     db.view( 'image_db_images',  'image_db.images', function(err, body) {
         if (err) {
             console.log("Error during db view stage: " + err.toString());
@@ -245,7 +245,7 @@ app.get('/doesnotneedattention', function (req, res) {
 
 
 app.get('/dashboardtesting', function (req, res) {
-    db.view( 'image_db_images',  'image_db.images', function(err, body) {
+    db.view( 'image_db_images',  'image.db_images', function(err, body) {
         if (err) {
             console.log("Error during db view stage: " + err.toString());
             res.status(404).send(err.toString());
@@ -263,13 +263,22 @@ app.get('/dashboardtesting', function (req, res) {
 app.get('/', function (req, res) {
     //for now just returning all image counts.
     //in the real world you would want to filter this list or truncate/page it
+    console.log("root / output");
+    console.log("starting loading the images from the database");
 
-    db.view( 'image_db_images',  'image_db.images', function(err, body) {
+    // Debug the service information
+    console.log ("*** Debug the service information ***" );
+    console.log ("Cloudant URL: " + cloudant_url);
+    console.log ("VR KEY: " + vr_key);
+    console.log ("vr_classifiers: " + vr_classifiers );
+
+    db.view( 'image_db_images',  'image.db_images', function(err, body) {
         if (err) {
             console.log("Error during db view stage: " + err.toString());
             res.status(404).send(err.toString());
             return;
         }
+
         console.log("Body is: " + JSON.stringify(body));
         //this should really be sorted on the database
         body.rows = body.rows.sort(sortList);
@@ -277,51 +286,57 @@ app.get('/', function (req, res) {
         var red_count = 0;
         var yellow_count = 0;
         var green_count = 0;
-		    var total_count = body.rows.length;
-
-
+		var total_count = body.rows.length;
 
         for (var i = 0; i < body.rows.length; i++) {
-
+          console.log("body.rows.length: " + body.rows.length);
           if ('analysis' in body.rows[i].key) {
-        		if(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score < 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score < 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score < 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score < 0.40 ) {
-      			     green_count++;
-      		  }
+                console.log("body.rows[i].key: " + body.rows[i].key.toString()); 
+                if (body.rows[i].key.analysis.image_classify.images.length > 0) {  
+                    if(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score < 0.40 &&
+                    body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score < 0.40 &&
+                    body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score < 0.40 &&
+                    body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score < 0.40 ) {
+                    green_count++;
+                    }
+                }
+      	  }
+		}
+
+		//Count images that may need attention
+        for (var i = 0; i < body.rows.length; i++) {
+          console.log("body.rows.length: " + body.rows.length);
+          if ('analysis' in body.rows[i].key) {
+                    console.log("analysis" + body.rows[i].key.toString());       
+                    if (body.rows[i].key.analysis.image_classify.images.length > 0) {
+                        if((body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score > 0.40 &&
+                            body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score < 0.60) ||
+                            (body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score > 0.40 &&
+                            body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score < 0.60) ||
+                            (body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score > 0.40 &&
+                            body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score < 0.60) ||
+                            (body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score > 0.40 &&
+                            body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score < 0.60)) {
+                            yellow_count++;
+                        }
+                    }
           }
-		    }
-
-		    //Count images that may need attention
-        for (var i = 0; i < body.rows.length; i++) {
-
-          if ('analysis' in body.rows[i].key) {
-        		if((body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score > 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score < 0.60) ||
-        			(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score > 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score < 0.60) ||
-        			(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score > 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score < 0.60) ||
-        			(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score > 0.40 &&
-        			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score < 0.60)) {
-      			       yellow_count++;
-            }
-          }
-    		}
+    	}
 
 
-		    //Count images that do need attention
+		//Count images that do need attention
         for (var i = 0; i < body.rows.length; i++) {
           if ('analysis' in body.rows[i].key) {
+              if (body.rows[i].key.analysis.image_classify.images.length > 0) {
         		if(body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[0].score > 0.60 ||
         			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[1].score > 0.60 ||
         			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[2].score > 0.60 ||
         			body.rows[i].key.analysis.image_classify.images[0].classifiers[0].classes[4].score > 0.60 ) {
       			       red_count++;
-      		  }
+      		    }
+              }  
           }
-		    }
+		}
 
         //console.log(JSON.stringify(body.rows));
         res.render("dashboard", {body:body, bodystring: JSON.stringify(body), total_count:total_count, green_count: green_count, yellow_count: yellow_count, red_count: red_count});
@@ -414,7 +429,7 @@ app.get('/api/favorites/attach', function(request, response) {
         if (err) {
             response.status(500);
             response.setHeader('Content-Type', 'text/plain');
-            response.write('Error: ' + err);
+            response.write('Error attchment: ' + err);
             response.end();
             return;
         }

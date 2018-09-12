@@ -10,9 +10,10 @@ applications:
   memory: 256M
   instances: 1
   domain: mybluemix.net
-  name: industrial-visual-analysis
+  name: piva-webapp-tsuedbro-us
+  host: piva-webapp-tsuedbro-us
   random-route: true
   disk_quota: 1024M
   services:
-  - visual-recognition
-  - cloudant-images
+  - pattern-PIVA-US-VisualRecognition_alias
+  - pattern-PIVA-US-Cloudant_alias

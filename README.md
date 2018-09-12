@@ -52,7 +52,9 @@ Follow these steps to setup and run the application. The steps are described in 
 
 ## 1. Watson Visual Recognition Setup
 
-Create the [Watson Visual Recognition](https://www.ibm.com/watson/services/visual-recognition/) service in IBM Cloud.  You will need the ``API Key``.
+Create the [Watson Visual Recognition](https://www.ibm.com/watson/services/visual-recognition/) service in IBM Cloud.  You will need the ``API Key``. 
+
+_Note:_ This service is not related to a watson studio project at the moment.
 
 * Open a command line interface (CLI) on your desktop and clone this repo:
 ```
