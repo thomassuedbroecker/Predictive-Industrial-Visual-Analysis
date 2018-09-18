@@ -1,0 +1,56 @@
+#!/bin/bash
+# Information steps:
+# 1) chmod u+x push-and-log.sh
+# 2) ./push-and-log.sh
+# cf api https://api.eu-gb.bluemix.net UK
+# cf api https://api.ng.bluemix.net US
+
+application_name="piva-webapp-tsuedbro"
+
+API_ENDPOINT="https://api.ng.bluemix.net"
+IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY=""
+USER_ID=""
+RESOURCE_GROUP="default"
+ORGANIZATION_NAME=""
+SPACE_NAME=""
+
+VR_IAM_APIKEY=""
+VR_CLASSIFIER_ID=""
+VR_URL="https://gateway.watsonplatform.net/visual-recognition/api"
+
+STOP="YES"
+END="NO"
+
+echo "IBM Cloud CLI login"
+echo "*****************"
+bx login -u $USER_ID  -o $ORGANIZATION_NAME -apikey $IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY -s $SPACE_NAME -g $RESOURCE_GROUP -a $API_ENDPOINT
+bx info
+echo ""
+
+echo "Change path to upload the needed images to train the VR service"
+pwd
+cd ..
+pwd
+cd vr-image-data
+pwd
+
+echo "Get the list of the existing classifiers"
+curl -u "apikey:$VR_IAM_APIKEY" "$VR_URL/v3/classifiers?verbose=true&version=2018-03-19"
+while [ "$STOP" != "$END" ]
+do
+  echo "--- While loop: ($((i++))) ---"
+  echo "------"
+  echo "Which classifier you want to delete?"
+  read VR_CLASSIFIER_ID_DELETE
+  curl -X DELETE -u "apikey:$VR_IAM_APIKEY" "$VR_URL/v3/classifiers/$VR_CLASSIFIER_ID_DELETE?version=2018-03-19"
+  echo "Do want to delete a other classifier? 'YES' otherwise insert 'NO':"
+  read STOP
+  echo ""
+done
+echo ""
+echo "Train the VR Service"
+curl -X POST -u "apikey:$VR_IAM_APIKEY" -F "Bursted_Pipe_positive_examples=@Burst_Images.zip" -F "Corroded_Pipe_positive_examples=@Corrosion_Images.zip" -F "Damaged_Coating_positive_examples=@Damaged_Coating_Images.zip" -F "Joint_Failure_positive_examples=@Joint_Failure_Images.zip" -F "Pipe_Leak_positive_examples=@Leak_Images.zip" -F "Normal_Condition_positive_examples=@Normal_Condition.zip" -F "name=OilPipeCondition" "$VR_URL/v3/classifiers?version=2018-03-19"
+echo ""
+echo "Copy the classifier ID value and insert:"
+read VR_CLASSIFIER_ID
+curl -X GET -u "apikey:$VR_IAM_APIKEY"  "$VR_URL/v3/classifiers/$VR_CLASSIFIER_ID?api_key=$VR_IAM_APIKEY&version=2018-03-19"

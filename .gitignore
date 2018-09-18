@@ -10,3 +10,4 @@ node_modules/
 # own bashes
 bx-*.sh
 ws-*.sh
+vr-*.sh

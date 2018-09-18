@@ -29,7 +29,41 @@ CURRENT_NAMESPACE=`bx wsk property get --namespace | awk '{print $3}'`
 echo "Current namespace is $CURRENT_NAMESPACE."
 
 function usage() {
-  echo -e "${YELLOW}Usage: $0 [--install,--uninstall,--reinstall,--env]${NC}"
+  echo -e "${YELLOW}Usage: $0 [--install,--update,--uninstall,--reinstall,--env]${NC}"
+}
+
+function update() {
+  echo -e "${YELLOW}Update..."
+
+  echo "Get existing Package parameter"
+  bx wsk package get image_db
+  
+  echo "Update VCAP_SERVICES as parameter"
+  bx wsk package update image_db\
+    --param cloudantUrl https://$CLOUDANT_USERNAME:$CLOUDANT_PASSWORD@$CLOUDANT_HOST\
+    --param cloudantDbName $CLOUDANT_DB\
+    --param watsonKey $VR_KEY\
+    --param watsonClassifiers $VR_CLASSIFIERS\
+    --param functionsHost $FUNCTIONS_APIHOST\
+    --param functionsAuth $FUNCTIONS_AUTHORIZATION
+  
+  echo "Refresh package bindings"
+  bx wsk package refresh
+
+  echo "Update action sequence 'sequenceAction'"
+  bx wsk action update sequenceAction --sequence image_db/analysis
+
+  echo "Update action 'analysis'"
+  bx wsk action update image_db/analysis analysis.js
+
+  echo "Update trigger 'image_db-cloudant-update-trigger'"  
+  bx wsk trigger update image_db-cloudant-update-trigger --param dbname $CLOUDANT_DB
+  
+  echo "Update rule 'image_db-rule'" 
+  bx wsk rule update image_db-rule image_db-cloudant-update-trigger image_db/analysis
+  
+  echo -e "${GREEN}Update Complete${NC}"
+  bx wsk list
 }
 
 function install() {
@@ -121,6 +155,9 @@ function showenv() {
 case "$1" in
 "--install" )
 install
+;;
+"--update" )
+update
 ;;
 "--uninstall" )
 uninstall
