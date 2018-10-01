@@ -2,3 +2,9 @@ node_modules
 git-cloud-helper
 readme_images
 sample-Images
+vr-image-data
+readme_images
+analysis.js
+piva.code-workspace
+.env.example
+.setup_function.sh

@@ -51,7 +51,7 @@ function update() {
   bx wsk package refresh
 
   echo "Update action sequence 'sequenceAction'"
-  bx wsk action update sequenceAction --sequence image_db/analysis
+  bx wsk action update sequenceImageAnalysis --sequence image_db/analysis
 
   echo "Update action 'analysis'"
   bx wsk action update image_db/analysis analysis.js
@@ -71,6 +71,7 @@ function install() {
 
   echo "Creating image_db package"
   bx wsk package create image_db
+  read ANYKEY
 
   echo "Adding VCAP_SERVICES as parameter"
   bx wsk package update image_db\
@@ -80,6 +81,7 @@ function install() {
     --param watsonClassifiers $VR_CLASSIFIERS\
     --param functionsHost $FUNCTIONS_APIHOST\
     --param functionsAuth $FUNCTIONS_AUTHORIZATION
+  read ANYKEY
 
   # we will need to listen to cloudant event
   echo "Binding cloudant"
@@ -88,30 +90,36 @@ function install() {
     --param username $CLOUDANT_USERNAME\
     --param password $CLOUDANT_PASSWORD\
     --param host $CLOUDANT_HOST
-
+  read ANYKEY
+  
   echo "Creating trigger"
   bx wsk trigger create image_db-cloudant-update-trigger --feed image_db-cloudant/changes --param dbname $CLOUDANT_DB
-
+  read ANYKEY
+  
   echo "Creating actions"
   bx wsk action create image_db/analysis analysis.js
+  read ANYKEY
 
   # No Longer Needed
   #bx wsk action create image_db/dataCleaner dataCleaner.js
 
-  echo "Creating change listener action"
+  #echo "Creating change listener action"
   #bx wsk action create image_db-cloudant-changelistener changelistener.js --param targetNamespace $CURRENT_NAMESPACE
 
   #recently added to address removal of includeDoc support
   echo "Creating action sequence"
-#bx wsk action create sequenceAction --sequence image_db-cloudant/read,image_db-cloudant
-  bx wsk action create sequenceAction --sequence image_db/analysis
+  #bx wsk action create sequenceAction --sequence image_db-cloudant/read,image_db-cloudant
+  bx wsk action create sequenceImageAnalysis --sequence image_db/analysis
+  read ANYKEY
 
   echo "Enabling change listener"
-#bx wsk rule create image_db-rule image_db-cloudant-update-trigger image_db-cloudant-changelistener
+  #bx wsk rule create image_db-rule image_db-cloudant-update-trigger image_db-cloudant-changelistener
   bx wsk rule create image_db-rule image_db-cloudant-update-trigger image_db/analysis
+  read ANYKEY
 
   echo "Set Cloudant Param on Trigger"
   bx wsk trigger update image_db-cloudant-update-trigger --param dbname $CLOUDANT_DB
+  read ANYKEY
 
   echo -e "${GREEN}Install Complete${NC}"
   bx wsk list
