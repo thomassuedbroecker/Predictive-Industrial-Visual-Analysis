@@ -1,15 +1,16 @@
 **__Skill Level__**: Beginner
 <br>**__N.B__**: All services used in this repo are Lite plans.
 
-**This is my customized version!**
+# Customized version for toolchain integration
+**__Skill Level__**: Beginner - advanced
 
-Following changes happen:
+_Following changes applied:_
 
 - Insert the configuration template **updateFunctionInDevOps-sh.txt** to use the devops toolchain to update the openwhisk functions in IBM Functions.
 - Insert the update command in the **setup_functions.sh**
 - Update the **cfignore** and **gitignore**
 - Add additionial helper bashes for git, cloud foundry deployment, watson visual recognition setup and starting logs for open whisk/functions in the folder **git-cloud-helper**
-- Insert a visual studio workspace preconfigurtion **piva.code-workspace**
+- Insert a visual studio workspace preconfiguration **piva.code-workspace**
 
 # [Industrial Visual Analysis](https://developer.ibm.com/code/patterns/industrial-visual-analysis/)
 
