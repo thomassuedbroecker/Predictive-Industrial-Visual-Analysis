@@ -34,6 +34,7 @@ function main(args) {
     var apiHost = args.functionsHost;
     var namespace = "_";
     var auth = args.functionsAuth;
+    var own_debug = args.own_debug;
 
     // generate api_key from auth
     var base64Auth = new Buffer(auth).toString('base64');
@@ -53,7 +54,8 @@ function main(args) {
     if (cloudantDocument.args.deleted) {
         //console.log("[", cloudantDocument.args.id, "] Ignored, it was deleted");
         return {status : "Ignoring cloudant change feed since it was for document deletion"};
-    } else if (newdocpattern.test(cloudantDocument.args.changes[0].rev)){
+    } else if (own_debug == true||
+               newdocpattern.test(cloudantDocument.args.changes[0].rev)==true){
         console.log("New cloudant doc detected!");
         var cloudant = require("cloudant")(cloudantDocument.args.cloudantUrl);
         var db = cloudant.db.use(cloudantDocument.args.cloudantDbName);
