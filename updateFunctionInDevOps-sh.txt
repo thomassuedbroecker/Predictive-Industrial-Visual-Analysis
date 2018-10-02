@@ -1,0 +1,85 @@
+# Update Functions
+
+This file contains the steps to insert inside the deployment stage in the DevOps Pipline.
+The parameter must be set inside the deplyment stage tab "ENVIRONMENT PROPERTIES".
+
+*******************
+
+#!/bin/bash
+echo "existing ibmcloud configuration"
+#curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
+
+echo "Show related folder content"
+ls
+echo ""
+
+echo "All parameters:"
+echo ""
+echo "$CLOUDANT_DB"
+echo "$CLOUDANT_USERNAME$CLOUDANT_HOST"
+echo "$$CLOUDANT_PASSWORD"
+echo "$CLOUDANT_HOST"
+echo "$VR_KEY"
+echo "$VR_CLASSIFIERS"
+echo "$FUNCTIONS_APIHOST"
+echo "$FUNCTIONS_AUTHORIZATION"
+echo ""
+
+echo "Custom login"
+bx login -a api.ng.bluemix.net -o "thomas.suedbroecker.2@de.ibm.com" -s "workshop" -apikey "FPXOYImr21obkT8V1JDLIe6l262TxDyLUhbNt84HNEoy"
+bx info
+echo ""
+
+echo "install/upate openwhisk/functions cli"
+#bx update -f
+#bx plugin install Cloud-Functions -r Bluemix -f
+#bx plugin update Cloud-Functions -r Bluemix
+bx plugin list
+#bx help
+echo ""
+
+echo "Get existing Package parameter"
+bx wsk package get image_db
+echo ""
+  
+echo "Update VCAP_SERVICES as parameter"
+bx wsk package update image_db\
+    --param cloudantUrl https://$CLOUDANT_USERNAME:$CLOUDANT_PASSWORD@$CLOUDANT_HOST\
+    --param cloudantDbName $CLOUDANT_DB\
+    --param watsonKey $VR_KEY\
+    --param watsonClassifiers $VR_CLASSIFIERS\
+    --param functionsHost $FUNCTIONS_APIHOST\
+    --param functionsAuth $FUNCTIONS_AUTHORIZATION
+echo ""
+
+echo "Refresh package bindings"
+bx  wsk package refresh
+echo ""
+
+echo "Update action sequence 'sequenceAction'"
+bx wsk action update sequenceAction --sequence image_db/analysis
+echo ""
+
+echo "Update action 'analysis'"
+bx wsk action update image_db/analysis ./analysis.js
+echo ""
+
+echo "List all triggers"
+bx wsk trigger list
+echo ""
+
+#echo "Update trigger 'image_db-cloudant-update-trigger'"  
+#bx wsk trigger update image_db-cloudant-update-trigger --param dbname $CLOUDANT_DB
+#echo "" 
+
+echo "List all rules"
+bx wsk rule list
+echo ""
+
+echo "Update rule 'image_db-rule'" 
+bx wsk rule update image_db-rule image_db-cloudant-update-trigger image_db/analysis
+echo ""
+  
+echo -e "${GREEN}Update Complete${NC}"
+bx wsk list
+

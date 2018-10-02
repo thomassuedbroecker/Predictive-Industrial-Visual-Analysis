@@ -3,6 +3,14 @@
 
 **This is my customized version!**
 
+Following changes happen:
+
+- Insert the configuration template **updateFunctionInDevOps-sh.txt** to use the devops toolchain to update the openwhisk functions in IBM Functions.
+- Insert the update command in the **setup_functions.sh**
+- Update the **cfignore** and **gitignore**
+- Add additionial helper bashes for git, cloud foundry deployment, watson visual recognition setup and starting logs for open whisk/functions in the folder **git-cloud-helper**
+- Insert a visual studio workspace preconfigurtion **piva.code-workspace**
+
 # [Industrial Visual Analysis](https://developer.ibm.com/code/patterns/industrial-visual-analysis/)
 
 In this code pattern, we will identify industrial equipment for various damages upon visual inspection by using machine learning classification techniques.  Using Watson Visual Recognition, we will analyze the image against a trained classifier to inspect oil and gas pipelines with six identifiers - Normal, Burst, Corrosion, Damaged Coating, Joint Failure and Leak. For each image we will provide a percent match with each of the category, on how closely the image matches one of the damaged identifiers or the Normal identifier.  This data can then be used to create a dashboard to the pipelines needing immediate attention to no attention.

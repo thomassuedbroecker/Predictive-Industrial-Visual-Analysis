@@ -25,7 +25,7 @@ var multipart = require('connect-multiparty')
 var multipartMiddleware = multipart();
 
 // Load credentials
-// From Bluemix configuration or local file
+// From IBM Cloud configuration or local file
 
 var vcapServices = require('vcap_services');
 // Cloudant Credentials

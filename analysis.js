@@ -48,6 +48,7 @@ function main(args) {
     cloudantDocument.args = args;
     var fs = require('fs');
     var request = require('request');
+    
     // nothing to do on deletion or update event
     if (cloudantDocument.args.deleted) {
         //console.log("[", cloudantDocument.args.id, "] Ignored, it was deleted");

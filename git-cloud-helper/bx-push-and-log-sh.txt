@@ -1,7 +1,5 @@
 #!/bin/bash
 # Information steps:
-# 1) chmod u+x push-and-log.sh
-# 2) ./push-and-log.sh
 # cf api https://api.eu-gb.bluemix.net UK
 # cf api https://api.ng.bluemix.net US
 
