@@ -125,20 +125,6 @@ function main(args) {
             return promise;
         };
 
-        //Enrich cloudant document with Weather Data
-        var p8 = function(cloudantDocument) {
-            var promise = new Promise(function(resolve, reject) {
-                                      cloudantDocument.weather = {};
-                                      if (true) {
-                                            resolve(cloudantDocument);
-                                          }
-                                          else {
-                                            reject(Error("It broke"));
-                                          }
-                                      });
-            return promise;
-        };
-
         //Get Attachment from Cloudant
         var p2 = function(cloudantDocument) {
             console.log("After enriching data with Weather: " + JSON.stringify(cloudantDocument));
@@ -174,8 +160,7 @@ function main(args) {
                                       });
             return promise;
         };
-
-       
+    
         //Process Image using watson visual recognition
         var p4 = function(cloudantDocument) {
                 var promise = new Promise(function(resolve, reject) {
@@ -268,6 +253,21 @@ function main(args) {
                                         });
                 return promise;
             };
+
+
+            //Enrich cloudant document with Weather Data
+            var p8 = function(cloudantDocument) {
+            var promise = new Promise(function(resolve, reject) {
+                                      cloudantDocument.weather = {};
+                                      if (true) {
+                                            resolve(cloudantDocument);
+                                          }
+                                          else {
+                                            reject(Error("It broke"));
+                                          }
+                                      });
+            return promise;
+            };
         }
         
         // Just return the watson visual recognition value when the parameter debug is true.
@@ -283,7 +283,7 @@ function main(args) {
         if (own_debug==false){
             return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
         } else {
-            return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4);
+            return p0(cloudantDocument).then(p1).then(p2).then(p3).then(p4);
         }
 
     } else {
