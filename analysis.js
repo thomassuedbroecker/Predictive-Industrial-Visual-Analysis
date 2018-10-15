@@ -34,8 +34,12 @@ function main(args) {
     var apiHost = args.functionsHost;
     var namespace = "_";
     var auth = args.functionsAuth;
-    var own_debug = args.own_debug;
-
+    if (args.own_debug === 'undefined'){
+        var own_debug = false;
+    } else {
+        var own_debug = args.own_debug;
+    }
+      
     // generate api_key from auth
     var base64Auth = new Buffer(auth).toString('base64');
     var apiKey = "Basic " + base64Auth;
