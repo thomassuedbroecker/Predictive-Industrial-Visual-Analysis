@@ -34,11 +34,13 @@ function main(args) {
     var apiHost = args.functionsHost;
     var namespace = "_";
     var auth = args.functionsAuth;
+      
     if (args.own_debug === 'undefined'){
         var own_debug = false;
     } else {
         var own_debug = args.own_debug;
     }
+    console.log("own_debug:",own_debug);
       
     // generate api_key from auth
     var base64Auth = new Buffer(auth).toString('base64');
@@ -303,8 +305,10 @@ function main(args) {
         // How to use this: https://javascript.info/promise-chaining
         console.log("own_debug:",own_debug);                                                    
         if (own_debug==false){
+            console.log("****** All steps to do ********");
             return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
         } else {
+            console.log("****** Debug steps to do ********");
             return p0(cloudantDocument).then(p1).then(p2).then(p4);
         }
 
