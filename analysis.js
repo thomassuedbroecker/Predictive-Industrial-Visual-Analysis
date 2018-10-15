@@ -168,7 +168,7 @@ function main(args) {
             return promise;
         };
 
-        //Process Image
+        //Process Image using watson visual recognition
         var p4 = function(cloudantDocument) {
             var promise = new Promise(function(resolve, reject) {
                                       console.log("processing & analyzing image")
@@ -259,9 +259,14 @@ function main(args) {
                                       });
             return promise;
         };
-
-        return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
-
+        
+        // just return the analytics value when debug is true.
+        if (own_debug==false){
+            return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
+          } else {
+            return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p7);
+          }
+        }
     } else {
         //console.log("Cloudant update detected, ignoring");
         return {status : "Ignoring cloudant change feed since it was for document update"};
