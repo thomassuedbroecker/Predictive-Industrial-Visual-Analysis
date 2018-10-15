@@ -260,13 +260,21 @@ function main(args) {
             return promise;
         };
         
-        // just return the analytics value when debug is true.
+        // Just return the watson visual recognition value when the parameter debug is true.
+        // p0 and p1 - get document from cloudant
+        // p2 - Get Attachment from Cloudant
+        // p3 - Process Thumbnail
+        // p4 - Process Image using watson visual recognition
+        // p5 - Insert data into Cloudant
+        // P6 - Insert attachment
+        // P7 - Process faces
+        // P8 - Enrich cloudant document with Weather Data
         if (own_debug==false){
             return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
-          } else {
-            return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p7);
-          }
+        } else {
+            return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4);
         }
+
     } else {
         //console.log("Cloudant update detected, ignoring");
         return {status : "Ignoring cloudant change feed since it was for document update"};
