@@ -35,7 +35,7 @@ function main(args) {
     var namespace = "_";
     var auth = args.functionsAuth;
       
-    if (args.own_debug === 'undefined'){
+    if (args.own_debug == undefined){
         var own_debug = false;
     } else {
         var own_debug = args.own_debug;
