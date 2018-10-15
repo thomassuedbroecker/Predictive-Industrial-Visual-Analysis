@@ -75,22 +75,29 @@ function main(args) {
                                              cloudantDocument = response;
 
                                              console.log("Entered Main Analysis Implementation");
+                                             
+                                                if (own_debug==false){
+                                                    if (cloudantDocument.hasOwnProperty("_id") &&
+                                                        cloudantDocument.type == "image_db.image" &&
+                                                        !cloudantDocument.hasOwnProperty("analysis") &&
+                                                        cloudantDocument.hasOwnProperty("_attachments") &&
+                                                        cloudantDocument._attachments.hasOwnProperty("image.jpg") &&
+                                                        !cloudantDocument._attachments.hasOwnProperty("thumbnail.jpg")) {
 
-                                             if (cloudantDocument.hasOwnProperty("_id") &&
-                                                 cloudantDocument.type == "image_db.image" &&
-                                                 !cloudantDocument.hasOwnProperty("analysis") &&
-                                                 cloudantDocument.hasOwnProperty("_attachments") &&
-                                                 cloudantDocument._attachments.hasOwnProperty("image.jpg") &&
-                                                 !cloudantDocument._attachments.hasOwnProperty("thumbnail.jpg")) {
+                                                    console.log("DOC EXISTS!");
+                                                    var imageDocumentId = cloudantDocument._id;
+                                                    console.log("[", imageDocumentId, "] Processing image.jpg from document");
 
-                                             console.log("DOC EXISTS!");
-                                             var imageDocumentId = cloudantDocument._id;
-                                             console.log("[", imageDocumentId, "] Processing image.jpg from document");
-
-                                             resolve(cloudantDocument);
-                                             } else {
-                                             return {status: "Document did not contain correct properties, ignoring"};
-                                             }
+                                                    resolve(cloudantDocument);
+                                                    } else {
+                                                    console.log("Document did not contain correct properties, ignoring");
+                                                    return {status: "Document did not contain correct properties, ignoring"};
+                                                    }
+                                                } else {
+                                                    var imageDocumentId = cloudantDocument._id;
+                                                    console.log("[", imageDocumentId, "] Processing image.jpg from document");
+                                                    resolve(cloudantDocument);
+                                                }
 
                                              } else {
                                              console.log("Error getting document");
@@ -272,6 +279,7 @@ function main(args) {
         // P6 - Insert attachment
         // P7 - Process faces
         // P8 - Enrich cloudant document with Weather Data
+        // How to use this: https://javascript.info/promise-chaining
         if (own_debug==false){
             return p0(cloudantDocument).then(p8).then(p2).then(p3).then(p4).then(p5).then(p6).then(p7);
         } else {
