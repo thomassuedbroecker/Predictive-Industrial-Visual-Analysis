@@ -9,11 +9,11 @@ applications:
 - path: .
   memory: 256M
   instances: 1
-  domain: mybluemix.net
-  name: piva-webapp-tsuedbro-us
-  host: piva-webapp-tsuedbro-us
+  domain: de-cloudfoundry-check-cl.eu-de.containers.appdomain.cloud
+  name: piva-webapp-tsuedbro-cfee
+  host: piva-webapp-tsuedbro-cfee
   random-route: true
   disk_quota: 1024M
   services:
-  - pattern-PIVA-US-VisualRecognition_alias
-  - pattern-PIVA-US-Cloudant_alias
+  - pattern-PIVA-US-VisualRecognition
+  - pattern-PIVA-US-Cloudant

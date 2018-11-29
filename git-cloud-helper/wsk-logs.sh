@@ -30,6 +30,8 @@ echo "get property all"
 ibmcloud fn property get
 echo "get list all"
 ibmcloud fn list
+echo "get list rules"
+ibmcloud fn rule list
 echo "get list activations"
 ibmcloud fn activation list
 echo "get list activations with limit"
