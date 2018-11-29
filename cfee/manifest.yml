@@ -14,5 +14,5 @@ applications:
   host: piva-webapp-tsuedbro-cfee-pipeline
   random-route: true
   disk_quota: 1024M
-  services:
+
  
