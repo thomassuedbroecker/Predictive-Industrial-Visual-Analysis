@@ -6,7 +6,7 @@ declared-services:
     label: cloudantNoSQLDB
     plan: Lite
 applications:
-- path: ../
+- path: .
   memory: 256M
   instances: 1
   domain: de-cloudfoundry-check-cl.eu-de.containers.appdomain.cloud
