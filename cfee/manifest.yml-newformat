@@ -1,17 +1,8 @@
-declared-services:
-  visual-recognition:
-    label: watson_vision_combined
-    plan: lite
-  cloudant-images:
-    label: cloudantNoSQLDB
-    plan: Lite
+domain: shared-domain.example.com
+memory: 256M
+instances: 1
 applications:
-- path: .
-  memory: 256M
-  instances: 1
-  domain: de-cloudfoundry-check-cl.eu-de.containers.appdomain.cloud
-  name: piva-webapp-tsuedbro-cfee-pipeline
-  host: piva-webapp-tsuedbro-cfee-pipeline
-  random-route: true
-  disk_quota: 1024M
+- name: springtock
+  host: tock09876
+  path: ./spring-music/build/libs/spring-music.war
  
